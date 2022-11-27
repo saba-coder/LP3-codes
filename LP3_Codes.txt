@@ -910,8 +910,7 @@ plt.scatter(reduced_centers[:,0],reduced_centers[:,1],color='black',marker='x',s
 ________________
 
 
-BCT
-Smart contract for bank account of a customer
+BCT:Bank.sol
 
 
 //SPDX-License-Identifier: Unlicensed
@@ -929,34 +928,40 @@ function getBal() public view returns(uint){
 return balances[msg.sender];
 }
 }
-	
 
 ________________
 
 
-Smart contract for Student data
+BCT: Student.sol
 
 
 //SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
+
 contract Database{
-struct student{
-int ID;
-string _fname;
-string _lname;
-}
-int public Count = 0;
-mapping(int => student) public stdRecords;
-function addNew(int _id,
-string calldata _fname,
-string calldata _lname) public{
-Count+=1;
-stdRecords[Count] = student(_id, _fname, _lname);
-}
-event received(address user, uint amount);
-receive() external payable{
-emit received(msg.sender, msg.value);
-}
+
+    struct student{
+        uint ID;
+        string _fname;
+        string _lname;
+    }
+
+    int public Count = 0;
+    student[] public records;
+
+    function addNew(uint _id, string calldata _fname, string calldata _lname) public{
+        Count+=1;
+        records.push(student(_id, _fname, _lname));
+        }
+
+    function viewStud(uint _id) public view returns(uint, string memory, string memory){
+        string memory f = records[_id]._fname;
+        string memory l = records[_id]._lname;
+        uint m = records[_id].ID;
+        return(m, f, l);
+    }
+    
+
 }
 	
 
