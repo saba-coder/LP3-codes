@@ -1,0 +1,1420 @@
+﻿**Note: 
+These codes are generated for educational purposes only. In case of any misuse the owner is not responsible for holding the rights of the documents.
+
+
+DAA
+Fibonacci
+
+
+// 1. Recursive Fibonacci Search
+#include <iostream>
+using namespace std;
+
+int fib(int x)
+{
+   if ((x == 1) || (x == 0))
+   {
+       return (x);
+   }
+   else
+   {
+       return (fib(x - 1) + fib(x - 2));
+   }
+}
+int main()
+{
+   int x, i = 0;
+   cout << "Enter the number of terms of series : ";
+   cin >> x;
+   cout << "\nFibonnaci Series : ";
+   while (i < x)
+   {
+       cout << " " << fib(i);
+       i++;
+   }
+   return 0;
+}
+	
+
+
+
+________________
+
+
+
+
+// 1. Non-Recursive Fibonacci Search code
+#include <iostream>
+using namespace std;
+
+int main()
+{
+   int n, t1 = 0, t2 = 1, nextTerm = 0;
+
+   cout << "Enter the number of  terms:  ";
+   cin >> n;
+
+   cout << "Fibonacci Series: ";
+
+   for (int i = 1; i <= n; ++i)
+   {
+       cout << t1 << ", ";
+       nextTerm = t1 + t2;
+       t1 = t2;
+       t2 = nextTerm;
+   }
+   return 0;
+}
+	
+
+
+
+________________
+
+
+Huffman Encoding
+
+
+#include<iostream>
+#include<queue>
+#include<string>
+using namespace std;
+struct node{
+  int freq;
+  char data;
+  const node *child0, *child1;
+  node(char d, int f = -1){ //assign values in the node
+     data = d;
+     freq = f;
+     child0 = NULL;
+     child1 = NULL;
+  }
+  node(const node *c0, const node *c1){
+     data = 0;
+     freq = c0->freq + c1->freq;
+     child0=c0;
+     child1=c1;
+  }
+  bool operator<( const node &a ) const { //< operator performs to find priority in queue
+     return freq >a.freq;
+  }
+  void traverse(string code = "")const{
+     if(child0!=NULL){
+        child0->traverse(code+'0'); //add 0 with the code as left child
+        child1->traverse(code+'1'); //add 1 with the code as right child
+     }else{
+        cout << "Data: " << data<< ", Frequency: "<<freq << ", Code: " << code<<endl;
+     }
+  }
+};
+void huffmanCoding(string str){
+  priority_queue<node> qu;
+  int frequency[256];
+  for(int i = 0; i<256; i++)
+     frequency[i] = 0; //clear all frequency
+  for(int i = 0; i<str.size(); i++){
+     frequency[int(str[i])]++; //increase frequency
+  }
+  for(int i = 0; i<256; i++){
+     if(frequency[i]){
+        qu.push(node(i, frequency[i]));
+     }
+  }
+  while(qu.size() >1){
+     node *c0 = new node(qu.top()); //get left child and remove from queue
+     qu.pop();
+     node *c1 = new node(qu.top()); //get right child and remove from queue
+     qu.pop();
+     qu.push(node(c0, c1)); //add freq of two child and add again in the queue
+  }
+  cout << "The Huffman Code: "<<endl;
+  qu.top().traverse(); //traverse the tree to get code
+}
+int main(){
+  string str;// = "ACCEBFFFFAAXXBLKE"; 
+  cin>>str;
+  huffmanCoding(str);
+}
+	
+
+
+
+________________
+
+
+Fractional Knapsack (Greedy)
+
+
+
+
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+bool compare(pair <float, int> p1, pair <float, int> p2)
+{
+        return p1.first > p2.first;
+}
+
+int fractional_knapsack(vector <int> weights, vector <int> values, int capacity)
+{
+        int len = weights.size();
+        int total_value = 0;
+
+        vector <pair <float, int>> ratio(len, make_pair(0.0, 0));
+
+        for(int i = 0; i < len; i++)
+                ratio[i] = make_pair(values[i]/weights[i], i);
+
+
+        sort(ratio.begin(), ratio.end(), compare);
+
+        
+        for(int i = 0; i < len; i++)
+        {
+                if(capacity == 0)
+                        break;
+
+                int index = ratio[i].second;
+
+                if(weights[index] <= capacity)
+                {
+                        capacity -= weights[index];
+                        total_value += values[index];
+                }
+                else
+                {
+                        int value_to_consider = values[index] * (float(capacity)/float(weights[index]));
+                        total_value += value_to_consider;
+                        capacity = 0;
+                }
+        }
+
+        return total_value;
+}
+
+int main()
+{
+        cout << "Enter the weights of the items, press -1 to stop" << endl;
+
+        vector <int> weights;
+
+        while(true)
+        {
+                int weight;
+                cin >> weight;
+
+                if(weight == -1)
+                        break;
+
+                weights.push_back(weight);
+        }
+
+        cout << "Enter the values of each item, press -1 to stop" << endl;
+        
+        vector <int> values;
+
+        while(true)
+        {
+                int value;
+                cin >> value;
+
+                if(value == -1)
+                        break;
+
+                values.push_back(value);
+        }
+
+        cout << "Enter the capacity of the knapsack" << endl;
+
+        int capacity;
+        cin >> capacity;
+
+        cout << "The maximum value possible based on current list is: " << fractional_knapsack(weights, values, capacity) << endl;
+}
+	________________
+
+
+0-1 Knapsack (DP)
+
+
+
+
+#include <iostream>
+using namespace std;
+int max(int x, int y) {
+  return (x > y) ? x : y;
+}
+int knapSack(int W, int w[], int v[], int n) {
+  int i, wt;
+  int K[n + 1][W + 1];
+  for (i = 0; i <= n; i++) {
+     for (wt = 0; wt <= W; wt++) {
+        if (i == 0 || wt == 0)
+        K[i][wt] = 0;
+        else if (w[i - 1] <= wt)
+           K[i][wt] = max(v[i - 1] + K[i - 1][wt - w[i - 1]], K[i - 1][wt]);
+        else
+       K[i][wt] = K[i - 1][wt];
+     }
+  }
+  return K[n][W];
+}
+int main() {
+  cout << "Enter the number of items in a Knapsack:";
+  int n, W;
+  cin >> n;
+  int v[n], w[n];
+  for (int i = 0; i < n; i++) {
+     cout << "Enter value and weight for item " << i << ":";
+     cin >> v[i];
+     cin >> w[i];
+  }
+  cout << "Enter the capacity of knapsack";
+  cin >> W;
+  cout << knapSack(W, w, v, n);
+  return 0;
+}
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+N-Queen
+
+
+ 
+ //program to solve the n queen problem 
+//grid[][] is represent the 2-d array with value(0 and 1) for grid[i][j]=1 means queen i are placed at j column.
+//we can take any number of queen , for this time we take the atmost 10 queen (grid[10][10]).
+#include<iostream>
+using namespace std;
+int grid[10][10];
+
+//print the solution
+void print(int n) {
+   for (int i = 0;i <= n-1; i++) {
+       for (int j = 0;j <= n-1; j++) {
+           
+               cout <<grid[i][j]<< " ";
+           
+       }
+       cout<<endl;
+   }
+   cout<<endl;
+   cout<<endl;
+}
+
+//function for check the position is safe or not
+//row is indicates the queen no. and col represents the possible positions
+bool isSafe(int col, int row, int n) {
+ //check for same column
+   for (int i = 0; i < row; i++) {
+       if (grid[i][col]) {
+           return false;
+       }
+   }
+   //check for upper left diagonal
+   for (int i = row,j = col;i >= 0 && j >= 0; i--,j--) {
+       if (grid[i][j]) {
+           return false;
+       }
+   }
+   //check for upper right diagonal
+   for (int i = row, j = col; i >= 0 && j < n; j++, i--) {
+       if (grid[i][j]) {
+           return false;
+       }
+   }
+   return true;
+}
+
+//function to find the position for each queen
+//row is indicates the queen no. and col represents the possible positions
+bool solve (int n, int row) {
+   if (n == row) {
+       print(n);
+       return true;
+   }
+   //variable res is use for possible backtracking 
+   bool res = false;
+   for (int i = 0;i <=n-1;i++) {
+       if (isSafe(i, row, n)) {
+           grid[row][i] = 1;
+           //recursive call solve(n, row+1) for next queen (row+1)
+           res = solve(n, row+1) || res;//if res ==false then backtracking will occur 
+           //by assigning the grid[row][i] = 0
+           
+           grid[row][i] = 0;
+       }
+   }
+   return res;
+}
+
+int main()
+{
+ ios_base::sync_with_stdio(false);
+   cin.tie(NULL);
+       int n;
+       cout<<"Enter the number of queen"<<endl;
+       cin >> n;
+       for (int i = 0;i < n;i++) {
+           for (int j = 0;j < n;j++) {
+               grid[i][j] = 0;
+           }
+       }
+       bool res = solve(n, 0);
+       if(res == false) {
+           cout << -1 << endl; //if there is no possible solution
+       } else {
+           cout << endl;
+       }
+ return 0;
+}
+	________________
+Merge Sort (Mini Project)
+
+
+
+
+#include <iostream>
+using namespace std;
+void merge(int array[], int const left, int const mid,int const right){
+auto const subArrayOne = mid - left + 1;
+auto const subArrayTwo = right - mid;
+auto *leftArray = new int[subArrayOne],*rightArray = new int[subArrayTwo];
+for (auto i = 0; i < subArrayOne; i++)
+leftArray[i] = array[left + i];
+for (auto j = 0; j < subArrayTwo; j++)
+rightArray[j] = array[mid + 1 + j];
+auto indexOfSubArrayOne= 0,
+indexOfSubArrayTwo= 0;
+int indexOfMergedArray= left;
+while (indexOfSubArrayOne < subArrayOne
+&& indexOfSubArrayTwo < subArrayTwo) {
+if (leftArray[indexOfSubArrayOne]<= rightArray[indexOfSubArrayTwo]) {
+array[indexOfMergedArray]= leftArray[indexOfSubArrayOne];
+indexOfSubArrayOne++; }
+else {
+array[indexOfMergedArray]= rightArray[indexOfSubArrayTwo];
+indexOfSubArrayTwo++; }
+indexOfMergedArray++; }
+while (indexOfSubArrayOne < subArrayOne) {
+array[indexOfMergedArray]= leftArray[indexOfSubArrayOne];
+indexOfSubArrayOne++;
+indexOfMergedArray++; }
+while (indexOfSubArrayTwo < subArrayTwo) {
+array[indexOfMergedArray]= rightArray[indexOfSubArrayTwo];
+indexOfSubArrayTwo++;
+indexOfMergedArray++;}
+delete[] leftArray;
+delete[] rightArray; }
+void mergeSort(int array[], int const begin, int const end){
+if (begin >= end)
+return;
+auto mid = begin + (end - begin) / 2;
+mergeSort(array, begin, mid);
+mergeSort(array, mid + 1, end);
+merge(array, begin, mid, end); }
+void printArray(int A[], int size){
+for (auto i = 0; i < size; i++)
+cout << A[i] << " "; }
+int main(){
+int arr[] = { 12, 11, 13, 5, 6, 7 };
+auto arr_size = sizeof(arr) / sizeof(arr[0]);
+cout << "Given array is \n";
+printArray(arr, arr_size);
+mergeSort(arr, 0, arr_size - 1);
+cout << "\nSorted array is \n";
+printArray(arr, arr_size);
+return 0;
+}
+	________________
+
+
+ML
+Uber Ride
+
+
+
+
+#Importing the required libraries
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+df  = pd.read_csv("uber.csv")
+
+df.head()
+
+df.info() #To get the required information of the dataset
+
+df.columns #TO get number of columns in the dataset
+
+df = df.drop(['Unnamed: 0', 'key'], axis= 1) #To drop unnamed column as it isn't required
+
+df.head()
+
+df.shape #To get the total (Rows,Columns)
+
+df.dtypes #To get the type of each column
+
+df.info()
+
+df.describe() #To get statistics of each columns 
+
+df.isnull().sum() 
+
+df['dropoff_latitude'].fillna(value=df['dropoff_latitude'].mean(),inplace = True)
+df['dropoff_longitude'].fillna(value=df['dropoff_longitude'].median(),inplace = True)
+
+df.isnull().sum() 
+
+df.dtypes
+
+df.pickup_datetime = pd.to_datetime(df.pickup_datetime, errors='coerce') 
+
+df.dtypes
+
+
+df= df.assign(hour = df.pickup_datetime.dt.hour,
+            day= df.pickup_datetime.dt.day,
+            month = df.pickup_datetime.dt.month,
+            year = df.pickup_datetime.dt.year,
+            dayofweek = df.pickup_datetime.dt.dayofweek)
+
+
+df.head()
+
+df = df.drop('pickup_datetime',axis=1)
+
+df.head()
+
+df.dtypes
+
+
+df.plot(kind = "box",subplots = True,layout = (7,2),figsize=(15,20)) #Boxplot to check the outliers
+
+
+#Using the InterQuartile Range to fill the values
+def remove_outlier(df1 , col):
+   Q1 = df1[col].quantile(0.25)
+   Q3 = df1[col].quantile(0.75)
+   IQR = Q3 - Q1
+   lower_whisker = Q1-1.5*IQR
+   upper_whisker = Q3+1.5*IQR
+   df[col] = np.clip(df1[col] , lower_whisker , upper_whisker)
+   return df1
+
+def treat_outliers_all(df1 , col_list):
+   for c in col_list:
+       df1 = remove_outlier(df , c)
+   return df1
+
+
+df = treat_outliers_all(df , df.iloc[: , 0::])
+
+df.plot(kind = "box",subplots = True,layout = (7,2),figsize=(15,20)) #Boxplot shows that dataset is free from outliers
+
+#pip install haversine
+import haversine as hs  #Calculate the distance using Haversine to calculate the distance between to points. Can't use Eucladian as it is for flat surface.
+travel_dist = []
+for pos in range(len(df['pickup_longitude'])):
+       long1,lati1,long2,lati2 = [df['pickup_longitude'][pos],df['pickup_latitude'][pos],df['dropoff_longitude'][pos],df['dropoff_latitude'][pos]]
+       loc1=(lati1,long1)
+       loc2=(lati2,long2)
+       c = hs.haversine(loc1,loc2)
+       travel_dist.append(c)
+   
+print(travel_dist)
+df['dist_travel_km'] = travel_dist
+df.head()
+
+
+#Uber doesn't travel over 130 kms so minimize the distance 
+df= df.loc[(df.dist_travel_km >= 1) | (df.dist_travel_km <= 130)]
+print("Remaining observastions in the dataset:", df.shape)
+
+#Finding inccorect latitude (Less than or greater than 90) and longitude (greater than or less than 180)
+incorrect_coordinates = df.loc[(df.pickup_latitude > 90) |(df.pickup_latitude < -90) |
+                                  (df.dropoff_latitude > 90) |(df.dropoff_latitude < -90) |
+                                  (df.pickup_longitude > 180) |(df.pickup_longitude < -180) |
+                                  (df.dropoff_longitude > 90) |(df.dropoff_longitude < -90)
+                                   ]
+
+
+df.drop(incorrect_coordinates, inplace = True, errors = 'ignore')
+
+
+df.head()
+
+df.isnull().sum()
+
+sns.heatmap(df.isnull()) #Free for null values
+
+
+corr = df.corr() #Function to find the correlation
+
+
+corr
+
+fig,axis = plt.subplots(figsize = (10,6))
+sns.heatmap(df.corr(),annot = True) #Correlation Heatmap (Light values means highly correlated)
+
+
+x = df[['pickup_longitude','pickup_latitude','dropoff_longitude','dropoff_latitude','passenger_count','hour','day','month','year','dayofweek','dist_travel_km']]
+
+
+y = df['fare_amount']
+
+
+
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test = train_test_split(x,y,test_size = 0.33)
+
+from sklearn.linear_model import LinearRegression
+regression = LinearRegression()
+
+regression.fit(X_train,y_train)
+
+regression.intercept_ #To find the linear intercept
+
+regression.coef_ #To find the linear coeeficient
+
+prediction = regression.predict(X_test) #To predict the target values
+
+print(prediction)
+
+y_test
+
+
+from sklearn.metrics import r2_score 
+
+r2_score(y_test,prediction)
+
+from sklearn.metrics import mean_squared_error
+
+MSE = mean_squared_error(y_test,prediction)
+
+MSE 
+
+RMSE = np.sqrt(MSE)
+
+RMSE
+
+from sklearn.ensemble import RandomForestRegressor
+
+rf = RandomForestRegressor(n_estimators=100) #Here n_estimators means number of trees you want to build before making the prediction
+
+rf.fit(X_train,y_train)
+
+y_pred = rf.predict(X_test)
+
+y_pred
+
+R2_Random = r2_score(y_test,y_pred)
+
+R2_Random
+
+MSE_Random = mean_squared_error(y_test,y_pred)
+
+MSE_Random
+
+RMSE_Random = np.sqrt(MSE_Random)
+
+
+RMSE_Random
+
+	
+
+________________
+
+
+
+
+Email Classification
+
+
+
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+get_ipython().run_line_magic('matplotlib', 'inline')
+import warnings
+warnings.filterwarnings('ignore')
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn import metrics
+
+df=pd.read_csv('emails.csv')
+df.head()
+df.columns
+df.isnull().sum()
+df.dropna(inplace = True)
+df.drop(['Email No.'],axis=1,inplace=True)
+X = df.drop(['Prediction'],axis = 1)
+y = df['Prediction']
+from sklearn.preprocessing import scale
+X = scale(X)
+# split into train and test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 42)
+# ##KNN classifier
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=7)
+knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
+print("Prediction",y_pred)
+print("KNN accuracy = ",metrics.accuracy_score(y_test,y_pred))
+print("Confusion matrix",metrics.confusion_matrix(y_test,y_pred))
+# ## SVM classifier
+model = SVC(C = 1)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+metrics.confusion_matrix(y_true=y_test, y_pred=y_pred)
+print("SVM accuracy = ",metrics.accuracy_score(y_test,y_pred))
+
+	
+
+Bank Customer
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt #Importing the libraries
+df = pd.read_csv("Churn_Modelling.csv")
+df.head()
+df.shape
+df.describe()
+df.isnull()
+df.isnull().sum()
+df.info()
+df.dtypes
+df.columns
+df = df.drop(['RowNumber', 'Surname', 'CustomerId'], axis= 1) #Dropping the unnecessary columns
+df.head()
+# # Visualization
+def visualization(x, y, xlabel):
+   plt.figure(figsize=(10,5))
+   plt.hist([x, y], color=['red', 'green'], label = ['exit', 'not_exit'])
+   plt.xlabel(xlabel,fontsize=20)
+   plt.ylabel("No. of customers", fontsize=20)
+   plt.legend()
+df_churn_exited = df[df['Exited']==1]['Tenure']
+df_churn_not_exited = df[df['Exited']==0]['Tenure']
+visualization(df_churn_exited, df_churn_not_exited, "Tenure")
+df_churn_exited2 = df[df['Exited']==1]['Age']
+df_churn_not_exited2 = df[df['Exited']==0]['Age']
+visualization(df_churn_exited2, df_churn_not_exited2, "Age")
+# # Converting the Categorical Variables
+X = df[['CreditScore','Gender','Age','Tenure','Balance','NumOfProducts','HasCrCard','IsActiveMember','EstimatedSalary']]
+states = pd.get_dummies(df['Geography'],drop_first = True)
+gender = pd.get_dummies(df['Gender'],drop_first = True)
+df = pd.concat([df,gender,states], axis = 1)
+# # Splitting the training and testing Dataset
+df.head()
+X = df[['CreditScore','Age','Tenure','Balance','NumOfProducts','HasCrCard','IsActiveMember','EstimatedSalary','Male','Germany','Spain']]
+y = df['Exited']
+from sklearn.model_selection import train_test_split
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size = 0.30)
+# # Normalizing the values with mean as 0 and Standard Deviation as 1
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X_train  = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+X_train
+X_test
+# # Building the Classifier Model using Keras
+import keras #Keras is the wrapper on the top of tenserflow
+#Can use Tenserflow as well but won't be able to understand the errors initially.
+from keras.models import Sequential #To create sequential neural network
+from keras.layers import Dense #To create hidden layers
+
+classifier = Sequential()
+#To add the layers
+#Dense helps to contruct the neurons
+#Input Dimension means we have 11 features 
+# Units is to create the hidden layers
+#Uniform helps to distribute the weight uniformly
+classifier.add(Dense(activation = "relu",input_dim = 11,units = 6,kernel_initializer = "uniform"))
+classifier.add(Dense(activation = "relu",units = 6,kernel_initializer = "uniform"))   #Adding second hidden layers
+classifier.add(Dense(activation = "sigmoid",units = 1,kernel_initializer = "uniform")) #Final neuron will be having siigmoid function
+classifier.compile(optimizer="adam",loss = 'binary_crossentropy',metrics = ['accuracy']) #To compile the Artificial Neural Network. Ussed Binary crossentropy as we just have only two output
+classifier.summary() #3 layers created. 6 neurons in 1st,6neurons in 2nd layer and 1 neuron in last
+classifier.fit(X_train,y_train,batch_size=10,epochs=50) #Fitting the ANN to training dataset
+y_pred =classifier.predict(X_test)
+y_pred = (y_pred > 0.5) #Predicting the result
+from sklearn.metrics import confusion_matrix,accuracy_score,classification_report
+cm = confusion_matrix(y_test,y_pred)
+cm
+accuracy = accuracy_score(y_test,y_pred)
+accuracy
+plt.figure(figsize = (10,7))
+sns.heatmap(cm,annot = True)
+plt.xlabel('Predicted')
+plt.ylabel('Truth')
+print(classification_report(y_test,y_pred))
+
+	
+
+________________
+
+
+
+
+K-Nearest Neighbors
+
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+get_ipython().run_line_magic('matplotlib', 'inline')
+import warnings
+warnings.filterwarnings('ignore')
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn import metrics
+
+df=pd.read_csv('diabetes.csv')
+df.columns
+df.isnull().sum()
+# Outcome is the label/target, other columns are features
+X = df.drop('Outcome',axis = 1)
+y = df['Outcome']
+
+from sklearn.preprocessing import scale
+X = scale(X)
+# split into train and test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.3, random_state = 42)
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=7)
+knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
+print("Confusion matrix: ")
+cs = metrics.confusion_matrix(y_test,y_pred)
+print(cs)
+print("Acccuracy ",metrics.accuracy_score(y_test,y_pred))
+
+# Classification error rate: proportion of instances misclassified over the whole set of instances.
+# Error rate is calculated as the total number of two incorrect predictions (FN + FP) divided by the total number of a dataset (examples in the dataset.
+total_misclassified = cs[0,1] + cs[1,0]
+print(total_misclassified)
+total_examples = cs[0,0]+cs[0,1]+cs[1,0]+cs[1,1]
+print(total_examples)
+print("Error rate",total_misclassified/total_examples)
+print("Error rate ",1-metrics.accuracy_score(y_test,y_pred))
+print("Precision score",metrics.precision_score(y_test,y_pred))
+print("Recall score ",metrics.recall_score(y_test,y_pred))
+print("Classification report ",metrics.classification_report(y_test,y_pred))
+
+	
+
+________________
+
+
+K-Means clustering
+
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans, k_means #For clustering
+from sklearn.decomposition import PCA #Linear Dimensionality reduction.
+
+df = pd.read_csv("sales_data_sample.csv") #Loading the dataset.
+df.head()
+df.shape 
+df.describe()
+df.info()
+df.isnull().sum()
+df.dtypes
+df_drop  = ['ADDRESSLINE1', 'ADDRESSLINE2', 'STATUS','POSTALCODE', 'CITY', 'TERRITORY', 'PHONE', 'STATE', 'CONTACTFIRSTNAME', 'CONTACTLASTNAME', 'CUSTOMERNAME', 'ORDERNUMBER']
+df = df.drop(df_drop, axis=1) #Dropping the categorical uneccessary columns along with columns having null values. Can't fill the null values are there are alot of null values.
+df.isnull().sum()
+df.dtypes
+# Checking the categorical columns.
+df['COUNTRY'].unique()
+df['PRODUCTLINE'].unique()
+df['DEALSIZE'].unique()
+productline = pd.get_dummies(df['PRODUCTLINE']) #Converting the categorical columns. 
+Dealsize = pd.get_dummies(df['DEALSIZE'])
+df = pd.concat([df,productline,Dealsize], axis = 1)
+df_drop  = ['COUNTRY','PRODUCTLINE','DEALSIZE'] #Dropping Country too as there are alot of countries. 
+df = df.drop(df_drop, axis=1)
+df['PRODUCTCODE'] = pd.Categorical(df['PRODUCTCODE']).codes #Converting the datatype.
+df.drop('ORDERDATE', axis=1, inplace=True) #Dropping the Orderdate as Month is already included.
+df.dtypes #All the datatypes are converted into numeric
+# ## Plotting the Elbow Plot to determine the number of clusters. 
+distortions = [] # Within Cluster Sum of Squares from the centroid
+K = range(1,10)
+for k in K:
+   kmeanModel = KMeans(n_clusters=k)
+   kmeanModel.fit(df)
+   distortions.append(kmeanModel.inertia_)   #Appeding the intertia to the Distortions 
+plt.figure(figsize=(16,8))
+plt.plot(K, distortions, 'bx-')
+plt.xlabel('k')
+plt.ylabel('Distortion')
+plt.title('The Elbow Method showing the optimal k')
+plt.show()
+
+# ## As the number of k increases Inertia decreases. 
+# ## Observations: A Elbow can be observed at 3 and after that the curve decreases gradually. 
+X_train = df.values #Returns a numpy array.
+X_train.shape
+model = KMeans(n_clusters=3,random_state=2) #Number of cluster = 3
+model = model.fit(X_train) #Fitting the values to create a model.
+predictions = model.predict(X_train) #Predicting the cluster values (0,1,or 2)
+unique,counts = np.unique(predictions,return_counts=True)
+counts = counts.reshape(1,3)
+counts_df = pd.DataFrame(counts,columns=['Cluster1','Cluster2','Cluster3'])
+counts_df.head()
+# ## Visualization 
+pca = PCA(n_components=2) #Converting all the features into 2 columns to make it easy to visualize using Principal COmponent Analysis.
+reduced_X = pd.DataFrame(pca.fit_transform(X_train),columns=['PCA1','PCA2']) #Creating a DataFrame.
+reduced_X.head()
+#Plotting the normal Scatter Plot
+plt.figure(figsize=(14,10))
+plt.scatter(reduced_X['PCA1'],reduced_X['PCA2'])
+model.cluster_centers_ #Finding the centriods. (3 Centriods in total. Each Array contains a centroids for particular feature )
+reduced_centers = pca.transform(model.cluster_centers_) #Transforming the centroids into 3 in x and y coordinates
+reduced_centers
+plt.figure(figsize=(14,10))
+plt.scatter(reduced_X['PCA1'],reduced_X['PCA2'])
+plt.scatter(reduced_centers[:,0],reduced_centers[:,1],color='black',marker='x',s=300) #Plotting the centriods
+reduced_X['Clusters'] = predictions #Adding the Clusters to the reduced dataframe.
+reduced_X.head()
+
+#Plotting the clusters 
+plt.figure(figsize=(14,10))
+plt.scatter(reduced_X[reduced_X['Clusters'] == 0].loc[:,'PCA1'],reduced_X[reduced_X['Clusters'] == 0].loc[:,'PCA2'],color='slateblue')
+plt.scatter(reduced_X[reduced_X['Clusters'] == 1].loc[:,'PCA1'],reduced_X[reduced_X['Clusters'] == 1].loc[:,'PCA2'],color='springgreen')
+plt.scatter(reduced_X[reduced_X['Clusters'] == 2].loc[:,'PCA1'],reduced_X[reduced_X['Clusters'] == 2].loc[:,'PCA2'],color='indigo')
+plt.scatter(reduced_centers[:,0],reduced_centers[:,1],color='black',marker='x',s=300)
+	
+
+________________
+
+
+BCT
+Smart contract for bank account of a customer
+
+
+//SPDX-License-Identifier: Unlicensed
+pragma solidity ^0.8.0;
+contract Bank{
+mapping(address=>uint) public balances;
+function deposit(uint _amount) public payable{
+balances[msg.sender] += _amount;
+}
+function withdraw(uint _amount) public{
+require(balances[msg.sender]>= _amount, "Not enough ether");
+balances[msg.sender] -= _amount;
+}
+function getBal() public view returns(uint){
+return balances[msg.sender];
+}
+}
+	
+
+________________
+
+
+Smart contract for Student data
+
+
+//SPDX-License-Identifier: Unlicensed
+pragma solidity ^0.8.0;
+contract Database{
+struct student{
+int ID;
+string _fname;
+string _lname;
+}
+int public Count = 0;
+mapping(int => student) public stdRecords;
+function addNew(int _id,
+string calldata _fname,
+string calldata _lname) public{
+Count+=1;
+stdRecords[Count] = student(_id, _fname, _lname);
+}
+event received(address user, uint amount);
+receive() external payable{
+emit received(msg.sender, msg.value);
+}
+}
+	
+
+
+
+
+
+
+
+________________
+
+
+DAA (Python Codes)
+Fibonacci
+Recursive
+"""
+Write a program to calculate Fibonacci numbers and find its step count.
+"""
+
+def recursive_fibonacii(n):
+  if n <= 1:
+      return n
+  else:
+      return(recursive_fibonacii(n-1) + recursive_fibonacii(n-2))
+
+n = int(input("Enter the number of terms: "))
+
+print("Fibonacci sequence : ", end = "")
+for i in range(n):
+ print(recursive_fibonacii(i), end=" ")
+	
+
+Iterative
+# Program to display the Fibonacci sequence up to n-th term
+nterms = int(input("Enter number of terms "))
+# first two terms
+n1, n2 = 0, 1
+count = 0
+# check if the number of terms is valid
+if nterms <= 0:
+  print("Please enter a positive integer")
+# if there is only one term, return n1
+#elif nterms == 1:
+#  print("Fibonacci sequence upto", nterms,":")
+ # print(n1)
+# generate fibonacci sequence
+else:
+  print("Fibonacci sequence:")
+  while count < nterms:
+      print(n1)
+      nth = n1 + n2
+      # update values
+      n1 = n2
+      n2 = nth
+      count += 1
+
+	
+
+________________
+
+
+
+
+Huffman encoding
+# A Huffman Tree Node
+import heapq
+
+class node:
+ def __init__(self, freq, symbol, left=None, right=None):
+    # frequency of symbol
+    self.freq = freq
+
+    # symbol name (character)
+    self.symbol = symbol
+
+    # node left of current node
+    self.left = left
+
+    # node right of current node
+    self.right = right
+
+    # tree direction (0/1)
+    self.huff = ''
+   
+ def __lt__(self, nxt):
+    return self.freq < nxt.freq
+   
+
+# utility function to print huffman
+# codes for all symbols in the newly
+# created Huffman tree
+def printNodes(node, val=''):
+
+ # huffman code for current node
+ newVal = val + str(node.huff)
+
+ # if node is not an edge node
+ # then traverse inside it
+ if(node.left):
+    printNodes(node.left, newVal)
+ if(node.right):
+    printNodes(node.right, newVal)
+
+    # if node is edge node then
+    # display its huffman code
+ if(not node.left and not node.right):
+    print(f"{node.symbol} -> {newVal}")
+
+
+# characters for huffman tree
+#chars = ['a', 'b', 'c', 'd', 'e', 'f']
+chars=[]
+n=int(input("Enter number of characters:"))
+for i in range(0,n):
+ 
+  ele=input("Enter character:")
+ 
+  chars.append(ele)
+
+# frequency of characters
+#freq = [ 5, 9, 12, 13, 16, 45]
+freq=[]
+for i in range(0,n):
+  fre=int(input("Enter frequency:"))
+  freq.append(fre)
+
+# list containing unused nodes
+nodes = []
+
+# converting characters and frequencies
+# into huffman tree nodes
+for x in range(len(chars)):
+ heapq.heappush(nodes, node(freq[x], chars[x]))
+
+while len(nodes) > 1:
+
+ # sort all the nodes in ascending order
+ # based on their frequency
+ left = heapq.heappop(nodes)
+ right = heapq.heappop(nodes)
+
+ # assign directional value to these nodes
+ left.huff = 0
+ right.huff = 1
+
+ # combine the 2 smallest nodes to create
+ # new node as their parent
+ newNode = node(left.freq+right.freq, left.symbol+right.symbol, left, right)
+
+ heapq.heappush(nodes, newNode)
+
+# Huffman Tree is ready!
+printNodes(nodes[0])
+	________________
+
+
+Fractional Knapsack
+"""Write a program to solve a fractional Knapsack problem using a greedy method"""
+
+# Creating a class for storing value and weights of the items/objects
+class Item:
+   def __init__(self, value, weight):
+       self.value = value
+       self.weight = weight
+
+# Greedy function to solve problem
+def fractionalKnapsack(W, arr):
+
+   # sorting Item on basis of ratio
+   arr.sort(key=lambda x: (x.value/x.weight), reverse=True)
+
+   print("\nNew order of items with their ratio : ")
+   for i in arr:
+       print(i.value, i.weight, i.value/i.weight)
+
+   # Result(value in Knapsack)
+   finalvalue = 0.0
+
+   # Looping through all Items
+   for item in arr:
+
+       # If adding Item won't overflow, add it completely
+       if item.weight <= W:
+           W -= item.weight
+           finalvalue += item.value
+
+       # If we can't add current Item, add fractional part
+       # of it
+       else:
+           finalvalue += item.value * W / item.weight
+           break
+   # Returning final value
+   return finalvalue
+
+
+
+if __name__ == "__main__":
+
+   # Weight of Knapsack
+   W = int(input("Enter weight of knapsack : "))
+
+   # creating an empty list for storing values and weights of items
+   arr = []
+
+   # prompting user to enter the number of elements they want to create
+   size = int(input("\nHow many items you want to create : "))
+
+   # Taking input of values and weights of items from user
+   for i in range(0, size):
+     v = int(input("\nEnter the value of item {} : ".format(i+1)))
+     w = int(input("\nEnter the weight of item {} : ".format(i+1)))
+     arr.append(Item(v,w))
+   # arr = [Item(60, 10), Item(100, 20), Item(120, 30)]
+
+   # Displaying the values and weights of items
+   print("\nItems with values and weights : ")
+   for i in arr:
+     print(i.value, i.weight)
+
+   # storing the maximum value that can be created in max_val and displaying it
+   max_val = fractionalKnapsack(W, arr)
+   print ("\nMaximum value we can obtain =",max_val)
+
+	
+
+________________
+
+
+0-1 Knapsack
+"""
+Write a program to solve a 0-1 Knapsack problem using dynamic programming.
+"""
+
+def knapSack(W, wt, val, n):
+
+ # Creating 2 D array of 0's
+ K = [[0 for x in range(W + 1)] for x in range(n + 1)]
+
+ # Build table K[][] in bottom up manner
+ for i in range(n + 1):
+   for w in range(W + 1):
+     if i == 0 or w == 0:
+       K[i][w] = 0
+     elif wt[i-1] <= w:
+       K[i][w] = max(val[i-1] + K[i-1][w-wt[i-1]], K[i-1][w])
+     else:
+       K[i][w] = K[i-1][w]
+
+ return K[n][W]
+
+
+n = int(input("How many items you want to create : "))
+W = int(input("Enter weight of knapsack : "))
+val = []
+wt = []
+
+for i in range(0, n):
+ v = int(input("\nEnter the value of item {} : ".format(i+1)))
+ w = int(input("\nEnter the weight of item {} : ".format(i+1)))
+ val.append(v)
+ wt.append(w)
+
+max_val = knapSack(W, wt, val, n)
+print ("\nMaximum value we can obtain =",max_val)
+
+	
+
+
+
+________________
+
+
+N-Queen
+"""
+Design 8-Queens matrix having first Queen placed. Use backtracking to place remaining Queens to generate the final 8-queen's matrix.
+"""
+
+global N
+N = 8
+
+def printSolution(board):
+        for i in range(N):
+                for j in range(N):
+                        print(board[i][j], end = "  ")
+                print("\n")
+
+# A utility function to check if a queen can
+# be placed on board[row][col]. Note that this
+# function is called when "col" queens are
+# already placed in columns from 0 to col -1.
+# So we need to check only left side for
+# attacking queens
+def isSafe(board, row, col):
+
+        # Check this row on left side
+        for i in range(col):
+                if board[row][i] == 1:
+                        return False
+
+        # Check upper diagonal on left side
+        for i, j in zip(range(row, -1, -1),
+                                        range(col, -1, -1)):
+                if board[i][j] == 1:
+                        return False
+
+        # Check lower diagonal on left side
+        for i, j in zip(range(row, N, 1),
+                                        range(col, -1, -1)):
+                if board[i][j] == 1:
+                        return False
+
+        return True
+
+def solveNQUtil(board, col):
+        
+        # If all queens are placed
+        # then return true
+ if col >= N:
+          return True
+
+        # Consider this column and try placing
+        # this queen in all rows one by one
+ for i in range(N):
+   
+   if isSafe(board, i, col):
+                        
+                        # Place this queen in board[i][col]
+            board[i][col] = 1
+
+                        # recur to place rest of the queens
+            if solveNQUtil(board, col + 1) == True:
+                    return True
+
+                        # If placing queen in board[i][col
+                        # doesn't lead to a solution, then
+                        # queen from board[i][col]
+            board[i][col] = 0
+
+        # if the queen can not be placed in any row in
+        # this column col then return false
+ return False
+
+ 
+# This function solves the N Queen problem using
+# Backtracking. It mainly uses solveNQUtil() to
+# solve the problem. It returns false if queens
+# cannot be placed, otherwise return true and
+# placement of queens in the form of 1s.
+def solveNQ():
+        board = [ [1, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0]
+                         ]
+
+        if solveNQUtil(board, 1) == False:
+                print ("Solution does not exist")
+                return False
+
+        printSolution(board)
+        return True
+
+
+solveNQ()
+	
+
+                Queen for 4*4 board        
+# Python3 program to solve N Queen 
+# Problem using backtracking
+global N
+N = 4
+ 
+def printSolution(board): 
+   for i in range(N):
+       for j in range(N):
+           print(board[i][j], end = " ")
+       print() 
+ 
+# A utility function to check if a queen can
+# be placed on board[row][col]. Note that this
+# function is called when "col" queens are
+# already placed in columns from 0 to col -1.
+# So we need to check only left side for
+# attacking queens
+def isSafe(board, row, col):
+ 
+   # Check this row on left side
+   for i in range(col):
+       if board[row][i] == 1:
+           return False
+ 
+   # Check upper diagonal on left side
+   for i, j in zip(range(row, -1, -1), 
+                   range(col, -1, -1)):
+       if board[i][j] == 1:
+           return False
+ 
+   # Check lower diagonal on left side
+   for i, j in zip(range(row, N, 1), 
+                   range(col, -1, -1)):
+       if board[i][j] == 1:
+           return False
+ 
+   return True
+ 
+def solveNQUtil(board, col):
+     
+   # base case: If all queens are placed
+   # then return true
+   if col >= N:
+       return True
+ 
+   # Consider this column and try placing
+   # this queen in all rows one by one
+   for i in range(N):
+ 
+       if isSafe(board, i, col):
+             
+           # Place this queen in board[i][col]
+           board[i][col] = 1
+ 
+           # recur to place rest of the queens
+           if solveNQUtil(board, col + 1) == True:
+               return True
+ 
+           # If placing queen in board[i][col
+           # doesn't lead to a solution, then
+           # queen from board[i][col]
+           board[i][col] = 0
+ 
+   # if the queen can not be placed in any row in
+   # this column col then return false
+   return False
+ 
+# This function solves the N Queen problem using
+# Backtracking. It mainly uses solveNQUtil() to
+# solve the problem. It returns false if queens
+# cannot be placed, otherwise return true and
+# placement of queens in the form of 1s.
+# note that there may be more than one
+# solutions, this function prints one of the
+# feasible solutions.
+def solveNQ():
+   board = [ [0, 0, 0, 0],
+             [0, 0, 0, 0],
+             [0, 0, 0, 0],
+             [0, 0, 0, 0] ]
+ 
+   if solveNQUtil(board, 0) == False:
+       print ("Solution does not exist")
+       return False
+ 
+   printSolution(board)
+   return True
+ 
+# Driver Code
+solveNQ()
